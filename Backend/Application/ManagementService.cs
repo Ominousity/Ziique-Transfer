@@ -1,8 +1,9 @@
 using System;
+using Application.Interfaces;
 
 namespace Application;
 
-public class ManagementService
+public class ManagementService : IManagementService
 {
 
 }

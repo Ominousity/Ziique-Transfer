@@ -1,8 +1,9 @@
 using System;
+using Application.Interfaces;
 
 namespace Infrastructure;
 
-public class ManagementRepo
+public class ManagementRepo : IManagementRepo
 {
 
 }
