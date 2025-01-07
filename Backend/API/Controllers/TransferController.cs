@@ -19,8 +19,15 @@ namespace API.Controllers
         [HttpGet("{transferID}")]
         public ActionResult<TransferFile> GetEncryptedTransfer(Guid transferID)
         {
-            var transfer = _transferService.GetEncryptedTransfer(transferID);
-            return Ok(transfer);
+            try
+            {
+                var transfer = _transferService.GetEncryptedTransfer(transferID);
+                return Ok(transfer);
+            }
+            catch (System.Exception)
+            {
+                return NotFound();
+            }
         }
 
         [HttpPost]

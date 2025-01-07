@@ -5,14 +5,22 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add configuration files
+builder.Configuration.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+                     .AddJsonFile("appsettings.override.json", optional: true, reloadOnChange: true);
+
+// Env variables
+var ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(
         builder =>
         {
             builder.AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader();
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
         });
 });
 
@@ -22,7 +30,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<DatabaseContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), sqlOptions => sqlOptions.MigrationsAssembly("API"));
+    options.UseSqlServer(ConnectionString, sqlOptions => sqlOptions.MigrationsAssembly("API"));
 });
 
 builder.Services.AddScoped<ITransferService, TransferService>();
@@ -32,15 +40,6 @@ builder.Services.AddScoped<IManagementService, ManagementService>();
 builder.Services.AddScoped<IManagementRepo, ManagementRepo>();
 
 var app = builder.Build();
-
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<DatabaseContext>();
-    if (context.Database.GetPendingMigrations().Any())
-    { context.Database.Migrate(); }
-
-}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

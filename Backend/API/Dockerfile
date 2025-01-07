@@ -7,7 +7,7 @@ ENV ASPNETCORE_URLS=http://+:8080
 
 USER app
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG configuration=Release
+ARG configuration=Development
 WORKDIR /src
 COPY ["API/API.csproj", "API/"]
 COPY ["Domain/Domain.csproj", "Domain/"]
@@ -19,10 +19,13 @@ WORKDIR "/src/API"
 RUN dotnet build "./API.csproj" -c $configuration -o /app/build
 
 FROM build AS publish
-ARG configuration=Release
+ARG configuration=Development
 RUN dotnet publish "./API.csproj" -c $configuration -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+COPY ["./API/appsettings.override.json", "appsettings.override.json"]
+
 ENTRYPOINT ["dotnet", "API.dll"]
