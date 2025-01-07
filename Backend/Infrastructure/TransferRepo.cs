@@ -1,6 +1,5 @@
-using System;
 using Application.Interfaces;
-using Domain;
+using Domain.Transfer;
 
 namespace Infrastructure;
 
@@ -12,9 +11,9 @@ public class TransferRepo : ITransferRepo
         _context = dbContext;
     }
 
-    public TransferFile GetEncryptedTransfer(Guid transferID)
+    public TransferFile GetTransfer(Guid transferID)
     {
-        TransferFile? file = _context.Transfers.Find(transferID);
+        TransferFile? file = _context.TransferFiles.Find(transferID);
         if (file is null)
         {
             throw new Exception("Transfer not found");
@@ -22,11 +21,27 @@ public class TransferRepo : ITransferRepo
         return file;
     }
 
-    public Guid SaveEncryptedTransfer(TransferFile transfer)
+    public List<TransferFile> GetAllTransfers()
     {
-        Guid ID = _context.Transfers.Add(transfer).Entity.TransferID;
+        return _context.TransferFiles.ToList();
+    }
+
+    public Guid SaveTransfer(TransferFile transfer)
+    {
+        Guid ID = _context.TransferFiles.Add(transfer).Entity.TransferID;
         _context.SaveChanges();
 
         return ID;
+    }
+
+    public void DeleteTransfer(Guid transferID)
+    {
+        TransferFile? file = _context.TransferFiles.Find(transferID);
+        if (file is null)
+        {
+            throw new Exception("Transfer not found");
+        }
+        _context.TransferFiles.Remove(file);
+        _context.SaveChanges();
     }
 }

@@ -1,10 +1,11 @@
-using System;
-using Domain;
+using Domain.Transfer;
 
 namespace Application.Interfaces;
 
 public interface ITransferRepo
 {
-    TransferFile GetEncryptedTransfer(Guid transferID);
-    Guid SaveEncryptedTransfer(TransferFile transfer);
+    TransferFile GetTransfer(Guid transferID);
+    List<TransferFile> GetAllTransfers();
+    Guid SaveTransfer(TransferFile transfer);
+    void DeleteTransfer(Guid transferID);
 }

@@ -1,6 +1,5 @@
-using System;
 using Application.Interfaces;
-using Domain;
+using Domain.Transfer;
 
 namespace Application;
 
@@ -13,13 +12,23 @@ public class TransferService : ITransferService
         _transferRepo = transferRepo;
     }
 
-    public TransferFile GetEncryptedTransfer(Guid transferID)
+    public TransferFile GetTransfer(Guid transferID)
     {
-        return _transferRepo.GetEncryptedTransfer(transferID);
+        return _transferRepo.GetTransfer(transferID);
     }
 
-    public Guid SaveEncryptedTransfer(TransferFile transfer)
+    public List<TransferFile> GetAllTransfers()
     {
-        return _transferRepo.SaveEncryptedTransfer(transfer);
+        return _transferRepo.GetAllTransfers();
+    }
+
+    public Guid SaveTransfer(TransferFile transfer)
+    {
+        return _transferRepo.SaveTransfer(transfer);
+    }
+
+    public void DeleteTransfer(Guid transferID)
+    {
+        _transferRepo.DeleteTransfer(transferID);
     }
 }

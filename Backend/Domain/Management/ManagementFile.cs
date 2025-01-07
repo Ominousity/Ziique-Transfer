@@ -1,12 +1,12 @@
 using System;
 
-namespace Domain.Transfer;
+namespace Domain.Management;
 
-public class TransferFile
+public class ManagementFile
 {
-    public Guid TransferID { get; set; }
+    public Guid ID { get; set; }
+    public Guid UserID { get; set; }
     public string EncryptedData { get; set; } = string.Empty;
     public string ContentType { get; set; } = string.Empty;
     public string FileName { get; set; } = string.Empty;
-    public DateTime CreatedDate { get; set; } = DateTime.Now;
 }

@@ -8,11 +8,13 @@ services:
       dockerfile: API/Dockerfile
     ports:
       - 8081:8080
+    env_file:
+      - .env
 
   mssql:
     image: mcr.microsoft.com/mssql/server:2019-latest
     environment:
-      SA_PASSWORD: "YourStrong!Passw0rd"
+      SA_PASSWORD: ${MSSQL_SA_PASSWORD}
       ACCEPT_EULA: "Y"
     ports:
       - 1433:1433

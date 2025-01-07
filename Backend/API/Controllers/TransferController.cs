@@ -1,6 +1,5 @@
 using Application.Interfaces;
-using Domain;
-using Microsoft.AspNetCore.Http;
+using Domain.Transfer;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -21,10 +20,10 @@ namespace API.Controllers
         {
             try
             {
-                var transfer = _transferService.GetEncryptedTransfer(transferID);
+                var transfer = _transferService.GetTransfer(transferID);
                 return Ok(transfer);
             }
-            catch (System.Exception)
+            catch (Exception)
             {
                 return NotFound();
             }
@@ -33,7 +32,7 @@ namespace API.Controllers
         [HttpPost]
         public ActionResult<Guid> SaveEncryptedTransfer([FromBody] TransferFile transfer)
         {
-            Guid ID = _transferService.SaveEncryptedTransfer(transfer);
+            Guid ID = _transferService.SaveTransfer(transfer);
             return Ok(ID);
         }
     }
