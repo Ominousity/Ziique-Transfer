@@ -1,7 +1,7 @@
 import { User } from "@/models/User";
 import axios from "axios";
 
-export async function GetUser(username: string) {
+export async function GetUser(username: string): Promise<User> {
 	return await axios.get(
 		`https://localhost:8081/api/User/GetUser/${username}`,
 		{

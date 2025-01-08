@@ -1,7 +1,7 @@
 import { ManagementFile } from "@/models/EncryptedFile";
 import axios from "axios";
 
-export async function GetFilesFromUser(userID: string) {
+export async function GetFilesFromUser(userID: string): Promise<ManagementFile[]> {
 	return await axios.get(
 		`https://localhost:8081/api/Management/GetFilesFromUser/${userID}`,
 		{
