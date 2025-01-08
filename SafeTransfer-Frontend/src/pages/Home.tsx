@@ -13,6 +13,8 @@ import {
   NavigationMenuItem,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
+import { Login, Register } from "@/api/UserService";
+import { useState } from "react";
 
 function Home() {
   const handleLoginButton = (): boolean => {
@@ -78,6 +80,17 @@ const AsciiArt = () => {
 };
 
 function LoginAndRegisterButton() {
+    const [Password, setPassword] = useState("")
+    const [Username, setUsername] = useState("");
+
+    const handleLogin = () => {
+        const User = {ID:"00000000-0000-0000-0000-000000000000", Username: Username, Password: Password }
+        Login(User)
+    }
+    const handleRegister = () => {
+        const User = {ID:"00000000-0000-0000-0000-000000000000", Username: Username, Password: Password }
+        Register(User)
+    }
   return (
     <>
     <NavigationMenu className="p-3">
@@ -95,14 +108,15 @@ function LoginAndRegisterButton() {
           </DialogHeader>
           <div className="flex items-center space-x-2">
             <div className="grid flex-1 gap-2">
-              <Input id="Username" placeholder="Username"></Input>
+              <Input id="Username" placeholder="Username" onChange={(e) => {setUsername(e.target.value)}} ></Input>
               <Input
                 id="Password"
                 type="Password"
                 placeholder="Password"
+                onChange={(e) => {setPassword(e.target.value)}}
               ></Input>
             </div>
-            <Button type="submit" size="sm" id="SubmitLogin">
+            <Button type="submit" size="sm" id="SubmitLogin" onClick={handleLogin}>
               Submit
             </Button>
           </div>
@@ -120,19 +134,15 @@ function LoginAndRegisterButton() {
           </DialogHeader>
           <div className="flex items-center space-x-2">
             <div className="grid flex-1 gap-2">
-              <Input id="Username" placeholder="Username"></Input>
+              <Input id="Username" placeholder="Username" onChange={(e) => {setUsername(e.target.value)}}></Input>
               <Input
                 id="Password"
                 type="Password"
                 placeholder="Password"
-              ></Input>
-              <Input
-                id="ConfirmPassword"
-                type="Password"
-                placeholder="Confirm Password"
+                onChange={(e) => {setPassword(e.target.value)}}
               ></Input>
             </div>
-            <Button type="submit" size="sm" id="SubmitRegister">
+            <Button type="submit" size="sm" id="SubmitRegister" onClick={handleRegister}> 
               Submit
             </Button>
           </div>
