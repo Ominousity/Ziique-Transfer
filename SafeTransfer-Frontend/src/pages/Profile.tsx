@@ -17,28 +17,50 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { User } from "@/models/User";
 import { handleFileUpload } from "@/helper/FileOperations";
+import { jwtDecode } from 'jwt-decode';
 
 function Profile() {
-	const [data, setData] = useState<ManagementFile[]>([]);
+    const [uniqueName, setUniqueName] = useState("");
+    const [data, setData] = useState<ManagementFile[]>([]);
     const [user, setUser] = useState<User>();
-	const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(true);
 
-	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				const user = await GetUser("username");
-				const files = await GetFilesFromUser(user.ID);
-                setUser(user);
-				setData(files);
-			} catch (err) {
-				console.error(err);
-			} finally {
-				setLoading(false);
-			}
-		};
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                type DecodedToken = {
+                    aud: string;
+                    unique_name: string;
+                };
+                const token = localStorage.getItem("token") || "";
+                const decodedToken = jwtDecode<DecodedToken>(token);
 
-		fetchData();
-	}, []);
+                if (typeof decodedToken.unique_name === 'string') {
+                    setUniqueName(decodedToken.unique_name);
+
+                    const fetchedUser = await GetUser(decodedToken.unique_name);
+                    setUser(fetchedUser);
+                    
+                    console.log(fetchedUser);
+                    
+                    if (user) {
+                        const files = await GetFilesFromUser(user.id);
+                        setData(files);
+                    } else {
+                        console.error("User is undefined");
+                    }
+                } else {
+                    console.error("Invalid token: " + uniqueName);
+                }
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []); // Empty dependency array ensures this runs only once
 
 	return (
 		<>
@@ -53,7 +75,7 @@ function Profile() {
 						</Link>
 					</NavigationMenuItem>
 					<NavigationMenuItem>
-						{user && <UploadFileDialog ID={user.ID} Username={user.Username} Password={user.Password} />}
+						{user && <UploadFileDialog id={user.id} username={user.username} password={user.password} />}
 					</NavigationMenuItem>
 				</NavigationMenuList>
 			</NavigationMenu>
@@ -75,7 +97,7 @@ function UploadFileDialog(user: User) {
 
     const handleUpload = () => {
 		if (file) {
-			handleFileUpload(file, user.Username + user.Password);
+			handleFileUpload(file, user.username + user.password);
 		} else {
 			console.error("No file selected");
 		}

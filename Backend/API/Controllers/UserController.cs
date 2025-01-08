@@ -1,12 +1,14 @@
 using Application.Interfaces;
 using Domain.User;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors("AllowAll")]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userRepo;

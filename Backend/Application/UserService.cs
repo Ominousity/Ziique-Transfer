@@ -61,6 +61,9 @@ public class UserService : IUserService
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };
         var token = tokenHandler.CreateToken(tokenDescriptor);
+
+        Console.WriteLine(token);
+
         return tokenHandler.WriteToken(token);
     }
 

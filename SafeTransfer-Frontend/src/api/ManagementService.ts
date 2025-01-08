@@ -3,7 +3,7 @@ import axios from "axios";
 
 export async function GetFilesFromUser(userID: string): Promise<ManagementFile[]> {
 	return await axios.get(
-		`https://localhost:8081/api/Management/GetFilesFromUser/${userID}`,
+		`http://localhost:8081/api/Management/${userID}`,
 		{
 			headers: {
 				"Content-Type": "application/json",
@@ -15,7 +15,7 @@ export async function GetFilesFromUser(userID: string): Promise<ManagementFile[]
 
 export async function SaveFileToUser(managementFile: ManagementFile) {
 	return await axios.post(
-		"https://localhost:8081/api/Management/SaveFileToUser",
+		"http://localhost:8081/api/Management",
 		managementFile,
         {
 			headers: {
@@ -28,7 +28,7 @@ export async function SaveFileToUser(managementFile: ManagementFile) {
 
 export async function DeleteFileFromUser(fileID: string) {
 	return await axios.delete(
-		`https://localhost:8081/api/Management/DeleteFileFromUser/${fileID}`,
+		`http://localhost:8081/api/Management/${fileID}`,
         {
 			headers: {
 				"Content-Type": "application/json",

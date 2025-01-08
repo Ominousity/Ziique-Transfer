@@ -3,13 +3,13 @@ import axios from "axios";
 
 export async function GetTransfer(transferID: string) {
 	return await axios.get(
-		`https://localhost:8081/api/Transfer/GetTransfer/${transferID}`
+		`http://localhost:8081/api/Transfer/${transferID}`
 	);
 }
 
 export async function saveTransfer(transfer: TransferFile) {
 	return await axios.post(
-		"https://localhost:8081/api/Transfer/SaveTransfer",
+		"http://localhost:8081/api/Transfer",
 		transfer
 	);
 }
