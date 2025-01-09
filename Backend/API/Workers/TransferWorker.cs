@@ -15,7 +15,7 @@ public class TransferWorker : IHostedService, IDisposable
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
+        _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromHours(1));
 
         return Task.CompletedTask;
     }
@@ -27,7 +27,7 @@ public class TransferWorker : IHostedService, IDisposable
         List<TransferFile> transfers = _transferService.GetAllTransfers();
         foreach (var transfer in transfers)
         {
-            if (transfer.CreatedDate < DateTime.Now.AddHours(1))
+            if (transfer.CreatedDate < DateTime.Now.AddHours(5))
             {
                 _transferService.DeleteTransfer(transfer.TransferID);
                 Console.WriteLine($"Transfer {transfer.TransferID} has expired and has been deleted");

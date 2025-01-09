@@ -27,6 +27,9 @@ public class UserService : IUserService
 
     public string Login(string username, string password)
     {
+        username = Encoding.UTF8.GetString(Convert.FromBase64String(username));
+        password = Encoding.UTF8.GetString(Convert.FromBase64String(password));
+
         var user = _userRepo.GetUserByUsername(username);
         if (user == null || !VerifyArgon2Hash(password, user.Password))
         {
@@ -39,6 +42,9 @@ public class UserService : IUserService
 
     public void Register(string username, string password)
     {
+        username = Encoding.UTF8.GetString(Convert.FromBase64String(username));
+        password = Encoding.UTF8.GetString(Convert.FromBase64String(password));
+
         var hashedPassword = HashPasswordWithArgon2(password);
         _userRepo.Register(new User
         {
