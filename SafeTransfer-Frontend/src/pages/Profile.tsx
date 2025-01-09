@@ -82,7 +82,7 @@ function Profile() {
                     <div className="py-3">
                         {user && <UploadFileDialog id={user.id} username={user.username} password={user.password} />}
                     </div>
-					<DataTable columns={columns} data={data}/>
+					<DataTable columns={columns(user?.username + user?.password)} data={data} />
 				</div>
 			)}
 		</>

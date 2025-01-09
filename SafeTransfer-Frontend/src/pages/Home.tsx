@@ -40,12 +40,11 @@ function Home() {
   }, [id])
   
   const handleIDURL = async () => {
-    console.log("this is the id", id);
     if (id) {
       setIsDialogOpen(true);
+      const file = await GetTransfer(id);
+      setDownloadFile(file);
     }
-    const file = await GetTransfer(id);
-    setDownloadFile(file);
   }
   const handleDownload = () => {
     handleFileDownload(downloadfile, downloadPassword);
@@ -185,12 +184,12 @@ function LoginAndRegisterButton() {
     };
 
     const handleLogin = async () => {
-        const User = {ID:"00000000-0000-0000-0000-000000000000", Username: Username, Password: Password }
+        const User = {id:"00000000-0000-0000-0000-000000000000", username: Username, password: Password }
         Login(User)
         setIsLoginDialogOpen(false)
     }
     const handleRegister = () => {
-        const User = {ID:"00000000-0000-0000-0000-000000000000", Username: Username, Password: Password }
+        const User = {id:"00000000-0000-0000-0000-000000000000", username: Username, password: Password }
         setIsRegisterDialogOpen(false)
         Register(User)
     }
