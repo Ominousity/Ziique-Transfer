@@ -17,6 +17,8 @@ import { Login, Register } from "@/api/UserService";
 import { useEffect, useState } from "react";
 import { handleFileUpload } from "@/helper/FileOperations";
 import { DialogDescription } from "@radix-ui/react-dialog";
+import { GetTransfer } from "@/api/TransferService";
+import { TransferFile } from "@/models/EncryptedFile";
 
 function Home() {
 
@@ -26,11 +28,16 @@ function Home() {
   const {id} = useParams();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  useEffect(() => {
+  const [downloadfile, setDownloadFile] = useState<TransferFile | null >(null);
+
+  useEffect(async () => {
+    console.log("this is the id", id);
     if (id) {
       setIsDialogOpen(true);
     }
-  })
+    const file = await GetTransfer(id);
+    setDownloadFile(file);
+  }, [id])
 
   const closeDialog = () => {
     setIsDialogOpen(false);
@@ -45,7 +52,6 @@ function Home() {
   };
   const handleUpload = () => {
      handleFileUpload(file!, epword)
-     console.log("hårdt billedet uploaded!!")
   }
   return (
     <>
@@ -84,18 +90,18 @@ function Home() {
       </div>
       <div className="absolute top-0 right-0">
         {handleLoginButton() === false ? (
-          <LoginAndRegisterButton checkLogin={checkLogin} />
+          <LoginAndRegisterButton />
         ) : (
           <LoggedIn />
         )}
       </div>
-      <Dialog open={isDialogOpen}>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
               PlaceHolder Should be name of file?
             </DialogTitle>
-            <DialogDescription> idk something here maybe?</DialogDescription>
+            <DialogDescription> Would you like to download ({downloadfile?.FileName})</DialogDescription>
           </DialogHeader>
           <div className="flex flex-row">
           <Input disabled type="link"></Input>
@@ -136,11 +142,9 @@ const AsciiArt = () => {
   );
 };
 
-interface LoginAndRegisterButtonProps {
-  checkLogin: () => Promise<void>;
-}
 
-function LoginAndRegisterButton({ checkLogin }: LoginAndRegisterButtonProps) {
+
+function LoginAndRegisterButton() {
     const [isRegisterDialogOpen, setIsRegisterDialogOpen] = useState(false);
     const [isLoginDialogOpen, setIsLoginDialogOpen] = useState(false);
     const [Password, setPassword] = useState("");
@@ -156,7 +160,6 @@ function LoginAndRegisterButton({ checkLogin }: LoginAndRegisterButtonProps) {
         const User = {ID:"00000000-0000-0000-0000-000000000000", Username: Username, Password: Password }
         Login(User)
         setIsLoginDialogOpen(false)
-        await checkLogin()
     }
     const handleRegister = () => {
         const User = {ID:"00000000-0000-0000-0000-000000000000", Username: Username, Password: Password }
