@@ -67,7 +67,13 @@ function Home() {
     const uploadid = await handleFileUpload(file!, epword)
      setUploadID(uploadid)
      setIsSubmitted(true);
+     
   }
+  const handleOpenChange = (open) => {
+    if (!open) {
+      setIsSubmitted(false); // Reset the submitted state when the dialog is closed
+    }
+  };
   return (
     <>
       <div className="h-screen flex flex-col items-center justify-center">
@@ -81,7 +87,7 @@ function Home() {
             id="UploadedFile"
             onChange={(e) => {setFile(e.target.files[0])}}
           ></Input>
-        <Dialog>
+        <Dialog onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button variant="outline">Submit File</Button>
       </DialogTrigger>
