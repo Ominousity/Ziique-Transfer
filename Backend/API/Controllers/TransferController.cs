@@ -30,10 +30,13 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Guid> SaveEncryptedTransfer([FromBody] TransferFile transfer)
+        public ActionResult<TransferDTO> SaveEncryptedTransfer([FromBody] TransferFile transfer)
         {
-            Guid ID = _transferService.SaveTransfer(transfer);
-            return Ok(ID);
+            TransferDTO TransferId = new TransferDTO
+            {
+                TransferID = _transferService.SaveTransfer(transfer)
+            };
+            return Ok(TransferId);
         }
     }
 }
