@@ -74,15 +74,13 @@ function Profile() {
 							</Button>
 						</Link>
 					</NavigationMenuItem>
-					<NavigationMenuItem>
-						{user && <UploadFileDialog id={user.id} username={user.username} password={user.password} />}
-					</NavigationMenuItem>
 				</NavigationMenuList>
 			</NavigationMenu>
 			{loading ? (
 				<div>Loading...</div>
 			) : (
 				<div className="w-2/3 mx-auto">
+                    {user && <UploadFileDialog id={user.id} username={user.username} password={user.password} />}
 					<DataTable columns={columns} data={data}/>
 				</div>
 			)}
