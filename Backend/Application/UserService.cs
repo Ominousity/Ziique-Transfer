@@ -22,6 +22,7 @@ public class UserService : IUserService
 
     public User GetUserByUsername(string username)
     {
+        username = Encoding.UTF8.GetString(Convert.FromBase64String(username));
         return _userRepo.GetUserByUsername(username);
     }
 
