@@ -10,7 +10,19 @@ function convertDataToBuffer(data: string | forge.util.ByteStringBuffer | ArrayB
     return forge.util.createBuffer(data, 'utf8');
 }
 
+// Function to derive a 32-byte key from a short key using SHA-256
+function deriveKey(shortKey: string) {
+    const md = forge.md.sha256.create();
+    md.update(shortKey, 'utf8');
+    return md.digest().bytes();
+}
+
 export function encrypt(data: string, key: string | forge.util.ByteStringBuffer) {
+    if (typeof key !== 'string') {
+        key = key.getBytes();
+    }
+    key = deriveKey(key);
+
     const iv = generateIV();
     const cipher = forge.cipher.createCipher('AES-CBC', key);
     cipher.start({ iv: iv });
@@ -27,6 +39,11 @@ export function encrypt(data: string, key: string | forge.util.ByteStringBuffer)
 }
 
 export function decrypt(data: string, key: string | forge.util.ByteStringBuffer) {
+    if (typeof key !== 'string') {
+        key = key.getBytes();
+    }
+    key = deriveKey(key);
+
     const ivHex = data.substring(0, 32); // First 32 characters are the IV
     const encryptedHex = data.substring(32); // Remaining characters are the ciphertext
 
