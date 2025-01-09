@@ -1,15 +1,15 @@
-import { TransferFile } from "@/models/EncryptedFile";
 import { decrypt, encrypt } from "./Encryption";
 import { saveAs } from "file-saver";
 import { saveTransfer } from "@/api/TransferService";
 import { SaveFileToUser } from "@/api/ManagementService";
 
-export function handleFileDownload(data: TransferFile, key: string) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function handleFileDownload(data: any, key: string) {
 	try {
-		const decryptedData = decrypt(data.EncryptedData, key);
+		const decryptedData = decrypt(data.encryptedData, key);
 
-		const blob = new Blob([decryptedData], { type: data.ContentType });
-		saveAs(blob, data.FileName);
+		const blob = new Blob([decryptedData], { type: data.contentType });
+		saveAs(blob, data.fileName);
 	} catch (error) {
 		console.error("Error downloading and decrypting file:", error);
 	}
@@ -20,11 +20,11 @@ export async function handleFileUpload(file: File, key: string): Promise<string>
 	const encryptedData = encrypt(fileData, key);
 
 	const transferFile = {
-		TransferID: "00000000-0000-0000-0000-000000000000",
-		EncryptedData: encryptedData,
-		ContentType: file.type,
-		FileName: file.name,
-		CreatedDate: new Date(),
+		transferID: "00000000-0000-0000-0000-000000000000",
+		encryptedData: encryptedData,
+		contentType: file.type,
+		fileName: file.name,
+		createdDate: new Date(),
 	};
 
 	return (await saveTransfer(transferFile)).data;
@@ -36,11 +36,11 @@ export async function handleFileUploadUser(file: File, userId: string, key: stri
 	const encryptedData = encrypt(fileData, key);
 
 	const managementFile = {
-		ID: "00000000-0000-0000-0000-000000000000",
-		UserID: userId,
-		EncryptedData: encryptedData,
-		ContentType: file.type,
-		FileName: file.name,
+		id: "00000000-0000-0000-0000-000000000000",
+		userID: userId,
+		encryptedData: encryptedData,
+		contentType: file.type,
+		fileName: file.name,
 	};
 
 	return (await SaveFileToUser(managementFile)).data;

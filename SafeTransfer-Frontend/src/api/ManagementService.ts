@@ -10,7 +10,7 @@ export async function GetFilesFromUser(userID: string): Promise<ManagementFile[]
 				Authorization: `Bearer ${localStorage.getItem("token")}`,
 			},
 		}
-	);
+	).then((response) => response.data);
 }
 
 export async function SaveFileToUser(managementFile: ManagementFile) {

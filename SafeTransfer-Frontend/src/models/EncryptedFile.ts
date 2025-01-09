@@ -1,15 +1,15 @@
 export interface ManagementFile {
-    ID: string
-    UserID: string
-    EncryptedData: string
-    ContentType: string
-    FileName: string
+    id: string
+    userID: string
+    encryptedData: string
+    contentType: string
+    fileName: string
 }
 
 export interface TransferFile {
-    TransferID: string
-    EncryptedData: string
-    ContentType: string
-    FileName: string
-    CreatedDate: Date
+    transferID: string
+    encryptedData: string
+    contentType: string
+    fileName: string
+    createdDate: Date
 }

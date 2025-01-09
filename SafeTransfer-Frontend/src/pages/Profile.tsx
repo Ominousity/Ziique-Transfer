@@ -41,11 +41,10 @@ function Profile() {
                     const fetchedUser = await GetUser(decodedToken.unique_name);
                     setUser(fetchedUser);
                     
-                    console.log(fetchedUser);
-                    
-                    if (user) {
-                        const files = await GetFilesFromUser(user.id);
+                    if (fetchedUser) {
+                        const files = await GetFilesFromUser(fetchedUser.id);
                         setData(files);
+                        console.log(files);
                     } else {
                         console.error("User is undefined");
                     }
@@ -93,19 +92,22 @@ function Profile() {
 export default Profile;
 
 function UploadFileDialog(user: User) {
+    const [open, setOpen] = useState(false);
 	const [file, setFile] = useState<File | null>(null);
 
     const handleUpload = () => {
 		if (file) {
 			handleFileUploadUser(file, user.id, user.username + user.password);
+            setOpen(false);
 		} else {
 			console.error("No file selected");
+            setOpen(false);
 		}
     }
 
     return (
         <div>
-            <Dialog>
+            <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger>
                     <Button variant={"outline"}>Upload New File</Button>
                 </DialogTrigger>
