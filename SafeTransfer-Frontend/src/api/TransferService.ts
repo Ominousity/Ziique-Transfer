@@ -8,8 +8,10 @@ export async function GetTransfer(transferID: string) {
 }
 
 export async function saveTransfer(transfer: TransferFile) {
+	console.log("endnu et hårdt billede her")
 	return await axios.post(
 		"http://localhost:8081/api/Transfer",
 		transfer
+		
 	);
 }

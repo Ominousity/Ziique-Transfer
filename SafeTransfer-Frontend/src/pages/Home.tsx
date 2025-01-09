@@ -7,7 +7,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -15,36 +15,38 @@ import {
 } from "@/components/ui/navigation-menu";
 import { Login, Register } from "@/api/UserService";
 import { useEffect, useState } from "react";
-import { jwtDecode } from "jwt-decode";
+import { handleFileUpload } from "@/helper/FileOperations";
+import { DialogDescription } from "@radix-ui/react-dialog";
 
 function Home() {
-  const [isLoggedIn, setLoggedIn] = useState(false);
 
-  const checkLogin = async () => {
-    try {
-      const token = localStorage.getItem("token") || "";
-      const decodedToken = jwtDecode(token);
+  const [file, setFile] = useState<File | null>(null);
+  const [epword, setEpword] = useState("");
 
-      const currentDate = new Date();
-
-      // JWT exp is in seconds
-      if (decodedToken.exp && decodedToken.exp * 1000 < currentDate.getTime() || token === "") {
-        // Token is not valid
-        setLoggedIn(false);
-      }
-      else {
-        setLoggedIn(true);
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  const {id} = useParams();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
-    console.log("Checking login status");
-      checkLogin();
-  }, [isLoggedIn]);
+    if (id) {
+      setIsDialogOpen(true);
+    }
+  })
 
+  const closeDialog = () => {
+    setIsDialogOpen(false);
+  }
+
+
+  const handleLoginButton = (): boolean => {
+    const token = localStorage.getItem("token");
+    if (token === null) {
+      return false;
+    } else return true;
+  };
+  const handleUpload = () => {
+     handleFileUpload(file!, epword)
+     console.log("hårdt billedet uploaded!!")
+  }
   return (
     <>
       <div className="h-screen flex flex-col items-center justify-center">
@@ -56,6 +58,7 @@ function Home() {
             className="mr-1"
             placeholder="Upload a file here!"
             id="UploadedFile"
+            onChange={(e) => {setFile(e.target.files[0])}}
           ></Input>
           <Dialog>
           <DialogTrigger asChild>
@@ -64,14 +67,14 @@ function Home() {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>
-                Please enter a password you would like to encrypt your file with
+                Please enter a password you would like to encrypt your file with:
               </DialogTitle>
             </DialogHeader>
             <div className="flex items-center space-x-2">
             <div className="grid flex-1 gap-2">
-              <Input id="EncryptFile" placeholder="Please enter a password here"></Input>
+              <Input id="EncryptFile" placeholder="Please enter a password here" type="password" onChange={(e) => {setEpword(e.target.value)}}></Input>
               </div>
-              <Button type="submit" size="sm" id="SubmitPassword">
+              <Button type="submit" size="sm" id="SubmitPassword" onClick={handleUpload}>
               Submit
             </Button>
               </div>
@@ -80,12 +83,26 @@ function Home() {
         </div>
       </div>
       <div className="absolute top-0 right-0">
-        {isLoggedIn === false ? (
+        {handleLoginButton() === false ? (
           <LoginAndRegisterButton checkLogin={checkLogin} />
         ) : (
           <LoggedIn />
         )}
       </div>
+      <Dialog open={isDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              PlaceHolder Should be name of file?
+            </DialogTitle>
+            <DialogDescription> idk something here maybe?</DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-row">
+          <Input disabled type="link"></Input>
+          <Button></Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
@@ -128,6 +145,12 @@ function LoginAndRegisterButton({ checkLogin }: LoginAndRegisterButtonProps) {
     const [isLoginDialogOpen, setIsLoginDialogOpen] = useState(false);
     const [Password, setPassword] = useState("");
     const [Username, setUsername] = useState("");
+    const handleLoginButton = (): boolean => {
+      const token = localStorage.getItem("token");
+      if (token === null) {
+        return false;
+      } else return true;
+    };
 
     const handleLogin = async () => {
         const User = {ID:"00000000-0000-0000-0000-000000000000", Username: Username, Password: Password }
