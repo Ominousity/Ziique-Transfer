@@ -1,25 +1,48 @@
-import CryptoJS from "crypto-js";
+import forge from "node-forge";
 
-export function encrypt(data: string, key: string): string {
-    const fileData = CryptoJS.enc.Utf8.parse(data);
-    let secSpec = CryptoJS.enc.Utf8.parse(key);
-    let ivSpec = CryptoJS.enc.Utf8.parse(key);
-
-    secSpec = CryptoJS.lib.WordArray.create(secSpec.words.slice(0, 16/4));
-    ivSpec = CryptoJS.lib.WordArray.create(secSpec.words.slice(0, 16/4));
-
-    const encrypted = CryptoJS.AES.encrypt(fileData, secSpec, {iv: ivSpec}).toString();
-    return encrypted;
+// Function to generate a random IV
+function generateIV() {
+    return forge.random.getBytesSync(16); // 16 bytes for AES
 }
 
-export function decrypt(data: string, key: string): string {
-    let secSpec = CryptoJS.enc.Utf8.parse(key);
-    let ivSpec = CryptoJS.enc.Utf8.parse(key);
+// Function to convert file data to ByteStringBuffer
+function convertDataToBuffer(data: string | forge.util.ByteStringBuffer | ArrayBuffer | forge.util.ArrayBufferView) {
+    return forge.util.createBuffer(data, 'utf8');
+}
 
-    secSpec = CryptoJS.lib.WordArray.create(secSpec.words.slice(0, 16/4));
-    ivSpec = CryptoJS.lib.WordArray.create(secSpec.words.slice(0, 16/4));
+export function encrypt(data: string, key: string | forge.util.ByteStringBuffer) {
+    const iv = generateIV();
+    const cipher = forge.cipher.createCipher('AES-CBC', key);
+    cipher.start({ iv: iv });
+    cipher.update(convertDataToBuffer(data));
+    cipher.finish();
+    const encrypted = cipher.output;
 
-    const bytes = CryptoJS.AES.decrypt(data, secSpec, {iv: ivSpec});
-    const originalText = bytes.toString(CryptoJS.enc.Utf8);
-    return originalText;
+    // Combine IV and ciphertext
+    const ivHex = forge.util.bytesToHex(iv);
+    const encryptedHex = forge.util.bytesToHex(encrypted.data);
+    console.log("IV (hex):", ivHex);
+    console.log("Encrypted Data (hex):", encryptedHex);
+    return ivHex + encryptedHex;
+}
+
+export function decrypt(data: string, key: string | forge.util.ByteStringBuffer) {
+    const ivHex = data.substring(0, 32); // First 32 characters are the IV
+    const encryptedHex = data.substring(32); // Remaining characters are the ciphertext
+
+    console.log("Extracted IV (hex):", ivHex);
+    console.log("Extracted Encrypted Data (hex):", encryptedHex);
+
+    const iv = forge.util.hexToBytes(ivHex);
+    const encryptedBytes = forge.util.hexToBytes(encryptedHex);
+
+    const decipher = forge.cipher.createDecipher('AES-CBC', key);
+    decipher.start({ iv: iv });
+    decipher.update(forge.util.createBuffer(encryptedBytes));
+    decipher.finish();
+    const decrypted = decipher.output;
+
+    const originalData = forge.util.decodeUtf8(decrypted.data);
+    console.log("Decrypted Data:", originalData);
+    return originalData;
 }
