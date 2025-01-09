@@ -1,4 +1,4 @@
-import { TransferFile } from "@/models/EncryptedFile";
+import { TransferDTO, TransferFile } from "@/models/EncryptedFile";
 import axios from "axios";
 
 export async function GetTransfer(transferID: string) {
@@ -7,7 +7,7 @@ export async function GetTransfer(transferID: string) {
 	).then((response) => response.data);
 }
 
-export async function saveTransfer(transfer: TransferFile) {
+export async function saveTransfer(transfer: TransferFile):Promise<TransferDTO> {
 	console.log("endnu et hårdt billede her")
 	return await axios.post(
 		"http://localhost:8081/api/Transfer",

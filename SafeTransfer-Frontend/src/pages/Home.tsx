@@ -7,7 +7,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -32,6 +32,9 @@ function Home() {
 
   const [downloadPassword, setDownloadPassword] = useState("");
 
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isUploadID, setUploadID] = useState("")
+
   useEffect(() => {
       handleIDURL();
   }, [id])
@@ -46,6 +49,7 @@ function Home() {
   }
   const handleDownload = () => {
     handleFileDownload(downloadfile, downloadPassword);
+    
   }
 
   const closeDialog = () => {
@@ -59,8 +63,10 @@ function Home() {
       return false;
     } else return true;
   };
-  const handleUpload = () => {
-     handleFileUpload(file!, epword)
+  const handleUpload = async() => {
+    const uploadid = await handleFileUpload(file!, epword)
+     setUploadID(uploadid)
+     setIsSubmitted(true);
   }
   return (
     <>
@@ -75,26 +81,39 @@ function Home() {
             id="UploadedFile"
             onChange={(e) => {setFile(e.target.files[0])}}
           ></Input>
-          <Dialog>
-          <DialogTrigger asChild>
-          <Button variant="outline">Submit File</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>
-                Please enter a password you would like to encrypt your file with:
-              </DialogTitle>
-            </DialogHeader>
-            <div className="flex items-center space-x-2">
+        <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline">Submit File</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>
+            {isSubmitted ? "Your URL:" : "Please enter a password you would like to encrypt your file with:"}
+          </DialogTitle>
+        </DialogHeader>
+        <div className="flex items-center space-x-2">
+          {isSubmitted ? (
             <div className="grid flex-1 gap-2">
-              <Input id="EncryptFile" placeholder="Please enter a password here" type="password" onChange={(e) => {setEpword(e.target.value)}}></Input>
-              </div>
-              <Button type="submit" size="sm" id="SubmitPassword" onClick={handleUpload}>
+              <Input id="URLField" value={`http://localhost:5173/${isUploadID}`} readOnly />
+            </div>
+          ) : (
+            <div className="grid flex-1 gap-2">
+              <Input
+                id="EncryptFile"
+                placeholder="Please enter a password here"
+                type="password"
+                onChange={(e) => { setEpword(e.target.value); }}
+              />
+            </div>
+          )}
+          {!isSubmitted && (
+            <Button type="submit" size="sm" id="SubmitPassword" onClick={handleUpload}>
               Submit
             </Button>
-              </div>
-          </DialogContent>
-          </Dialog>
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
         </div>
       </div>
       <div className="absolute top-0 right-0">

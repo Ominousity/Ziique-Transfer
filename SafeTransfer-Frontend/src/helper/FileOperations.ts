@@ -27,7 +27,7 @@ export async function handleFileUpload(file: File, key: string): Promise<string>
 		createdDate: new Date(),
 	};
 
-	return (await saveTransfer(transferFile)).data;
+	return (await saveTransfer(transferFile)).transferID;
 	
 }
 

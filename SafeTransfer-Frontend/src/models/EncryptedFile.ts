@@ -13,3 +13,7 @@ export interface TransferFile {
     fileName: string
     createdDate: Date
 }
+
+export interface TransferDTO {
+    transferID: string
+}
