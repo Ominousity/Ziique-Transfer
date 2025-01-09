@@ -19,8 +19,6 @@ export async function Login(user: User) {
 	user.username = btoa(user.username);
 	user.password = btoa(user.password);
 
-	console.log(user);
-
 	const token = (await axios.post("http://localhost:8081/api/User/Login", user)).data;
     localStorage.setItem("token", token);
 }

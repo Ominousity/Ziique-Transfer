@@ -44,7 +44,6 @@ function Profile() {
                     if (fetchedUser) {
                         const files = await GetFilesFromUser(fetchedUser.id);
                         setData(files);
-                        console.log(files);
                     } else {
                         console.error("User is undefined");
                     }

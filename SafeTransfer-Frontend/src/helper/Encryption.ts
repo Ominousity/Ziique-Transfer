@@ -17,24 +17,27 @@ function deriveKey(shortKey: string) {
     return md.digest().bytes();
 }
 
-export function encrypt(data: string, key: string | forge.util.ByteStringBuffer) {
+export function encrypt(data: ArrayBuffer, key: string | forge.util.ByteStringBuffer) {
+    const byteData = new Uint8Array(data);
+
     if (typeof key !== 'string') {
         key = key.getBytes();
     }
     key = deriveKey(key);
 
+    console.log("Original Data:", byteData);
+
     const iv = generateIV();
     const cipher = forge.cipher.createCipher('AES-CBC', key);
     cipher.start({ iv: iv });
-    cipher.update(convertDataToBuffer(data));
+    cipher.update(convertDataToBuffer(byteData));
     cipher.finish();
     const encrypted = cipher.output;
 
     // Combine IV and ciphertext
     const ivHex = forge.util.bytesToHex(iv);
     const encryptedHex = forge.util.bytesToHex(encrypted.data);
-    console.log("IV (hex):", ivHex);
-    console.log("Encrypted Data (hex):", encryptedHex);
+    console.log("Extracted Encrypted Data (hex):", encryptedHex);
     return ivHex + encryptedHex;
 }
 
@@ -47,7 +50,6 @@ export function decrypt(data: string, key: string | forge.util.ByteStringBuffer)
     const ivHex = data.substring(0, 32); // First 32 characters are the IV
     const encryptedHex = data.substring(32); // Remaining characters are the ciphertext
 
-    console.log("Extracted IV (hex):", ivHex);
     console.log("Extracted Encrypted Data (hex):", encryptedHex);
 
     const iv = forge.util.hexToBytes(ivHex);
