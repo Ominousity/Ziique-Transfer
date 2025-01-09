@@ -36,7 +36,26 @@ function Home() {
             placeholder="Upload a file here!"
             id="UploadedFile"
           ></Input>
-          <Button variant="outline">Submit Placeholder</Button>
+          <Dialog>
+          <DialogTrigger asChild>
+          <Button variant="outline">Submit File</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>
+                Please enter a password you would like to encrypt your file with
+              </DialogTitle>
+            </DialogHeader>
+            <div className="flex items-center space-x-2">
+            <div className="grid flex-1 gap-2">
+              <Input id="EncryptFile" placeholder="Please enter a password here"></Input>
+              </div>
+              <Button type="submit" size="sm" id="SubmitPassword">
+              Submit
+            </Button>
+              </div>
+          </DialogContent>
+          </Dialog>
         </div>
       </div>
       <div className="absolute top-0 right-0">
