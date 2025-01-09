@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { Login, Register } from "@/api/UserService";
 import { useEffect, useState } from "react";
-import { handleFileUpload } from "@/helper/FileOperations";
+import { handleFileDownload, handleFileUpload } from "@/helper/FileOperations";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { GetTransfer } from "@/api/TransferService";
 import { TransferFile } from "@/models/EncryptedFile";
@@ -30,14 +30,23 @@ function Home() {
 
   const [downloadfile, setDownloadFile] = useState<TransferFile | null >(null);
 
-  useEffect(async () => {
+  const [downloadPassword, setDownloadPassword] = useState("");
+
+  useEffect(() => {
+      handleIDURL();
+  }, [id])
+  
+  const handleIDURL = async () => {
     console.log("this is the id", id);
     if (id) {
       setIsDialogOpen(true);
     }
     const file = await GetTransfer(id);
     setDownloadFile(file);
-  }, [id])
+  }
+  const handleDownload = () => {
+    handleFileDownload(downloadfile, downloadPassword);
+  }
 
   const closeDialog = () => {
     setIsDialogOpen(false);
@@ -99,13 +108,13 @@ function Home() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              PlaceHolder Should be name of file?
+              Would you like to download {downloadfile?.fileName}?
             </DialogTitle>
-            <DialogDescription> Would you like to download ({downloadfile?.FileName})</DialogDescription>
+            <DialogDescription> Please type the provided password for the file:</DialogDescription>
           </DialogHeader>
-          <div className="flex flex-row">
-          <Input disabled type="link"></Input>
-          <Button></Button>
+          <div className="flex flex-col items-center">
+          <Input type="password" onChange={(e) => {setDownloadPassword(e.target.value)}}></Input>
+          <Button className="mt-1 w-1/3" onClick={handleDownload}>Download File</Button>
           </div>
         </DialogContent>
       </Dialog>
