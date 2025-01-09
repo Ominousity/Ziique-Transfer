@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { User } from "@/models/User";
-import { handleFileUpload } from "@/helper/FileOperations";
+import { handleFileUploadUser } from "@/helper/FileOperations";
 import { jwtDecode } from 'jwt-decode';
 
 function Profile() {
@@ -80,7 +80,9 @@ function Profile() {
 				<div>Loading...</div>
 			) : (
 				<div className="w-2/3 mx-auto">
-                    {user && <UploadFileDialog id={user.id} username={user.username} password={user.password} />}
+                    <div className="py-3">
+                        {user && <UploadFileDialog id={user.id} username={user.username} password={user.password} />}
+                    </div>
 					<DataTable columns={columns} data={data}/>
 				</div>
 			)}
@@ -95,7 +97,7 @@ function UploadFileDialog(user: User) {
 
     const handleUpload = () => {
 		if (file) {
-			handleFileUpload(file, user.username + user.password);
+			handleFileUploadUser(file, user.id, user.username + user.password);
 		} else {
 			console.error("No file selected");
 		}

@@ -14,15 +14,36 @@ import {
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
 import { Login, Register } from "@/api/UserService";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { jwtDecode } from "jwt-decode";
 
 function Home() {
-  const handleLoginButton = (): boolean => {
-    const token = localStorage.getItem("token");
-    if (token === null) {
-      return false;
-    } else return true;
+  const [isLoggedIn, setLoggedIn] = useState(false);
+
+  const checkLogin = async () => {
+    try {
+      const token = localStorage.getItem("token") || "";
+      const decodedToken = jwtDecode(token);
+
+      const currentDate = new Date();
+
+      // JWT exp is in seconds
+      if (decodedToken.exp && decodedToken.exp * 1000 < currentDate.getTime() || token === "") {
+        // Token is not valid
+        setLoggedIn(false);
+      }
+      else {
+        setLoggedIn(true);
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
+
+  useEffect(() => {
+    console.log("Checking login status");
+      checkLogin();
+  }, [isLoggedIn]);
 
   return (
     <>
@@ -59,8 +80,8 @@ function Home() {
         </div>
       </div>
       <div className="absolute top-0 right-0">
-        {handleLoginButton() === false ? (
-          <LoginAndRegisterButton />
+        {isLoggedIn === false ? (
+          <LoginAndRegisterButton checkLogin={checkLogin} />
         ) : (
           <LoggedIn />
         )}
@@ -98,16 +119,25 @@ const AsciiArt = () => {
   );
 };
 
-function LoginAndRegisterButton() {
-    const [Password, setPassword] = useState("")
+interface LoginAndRegisterButtonProps {
+  checkLogin: () => Promise<void>;
+}
+
+function LoginAndRegisterButton({ checkLogin }: LoginAndRegisterButtonProps) {
+    const [isRegisterDialogOpen, setIsRegisterDialogOpen] = useState(false);
+    const [isLoginDialogOpen, setIsLoginDialogOpen] = useState(false);
+    const [Password, setPassword] = useState("");
     const [Username, setUsername] = useState("");
 
-    const handleLogin = () => {
+    const handleLogin = async () => {
         const User = {ID:"00000000-0000-0000-0000-000000000000", Username: Username, Password: Password }
         Login(User)
+        setIsLoginDialogOpen(false)
+        await checkLogin()
     }
     const handleRegister = () => {
         const User = {ID:"00000000-0000-0000-0000-000000000000", Username: Username, Password: Password }
+        setIsRegisterDialogOpen(false)
         Register(User)
     }
   return (
@@ -115,7 +145,7 @@ function LoginAndRegisterButton() {
     <NavigationMenu className="p-3">
         <NavigationMenuList>
             <NavigationMenuItem>
-            <Dialog>
+            <Dialog open={isLoginDialogOpen} onOpenChange={setIsLoginDialogOpen}>
         <DialogTrigger asChild>
           <Button variant="outline" className="mr-1">
             Login
@@ -143,7 +173,7 @@ function LoginAndRegisterButton() {
       </Dialog>
         </NavigationMenuItem>
         <NavigationMenuItem>
-        <Dialog>
+        <Dialog open={isRegisterDialogOpen} onOpenChange={setIsRegisterDialogOpen}>
         <DialogTrigger asChild>
           <Button variant="outline">Register</Button>
         </DialogTrigger>
