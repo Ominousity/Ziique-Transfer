@@ -19,8 +19,7 @@ export function decrypt(data: string, key: string): string {
     secSpec = CryptoJS.lib.WordArray.create(secSpec.words.slice(0, 16/4));
     ivSpec = CryptoJS.lib.WordArray.create(secSpec.words.slice(0, 16/4));
 
-    const bytes = CryptoJS.AES.decrypt(data, key,  {iv: ivSpec});
-    
+    const bytes = CryptoJS.AES.decrypt(data, secSpec, {iv: ivSpec});
     const originalText = bytes.toString(CryptoJS.enc.Utf8);
     return originalText;
 }

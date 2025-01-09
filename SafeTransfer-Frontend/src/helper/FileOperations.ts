@@ -17,7 +17,7 @@ export function handleFileDownload(data: any, key: string) {
 
 export async function handleFileUpload(file: File, key: string): Promise<string> {
 	const fileData = ReadFile(file);
-	const encryptedData = encrypt(fileData, key);
+	const encryptedData = encrypt(await fileData, key);
 
 	const transferFile = {
 		transferID: "00000000-0000-0000-0000-000000000000",
@@ -33,7 +33,7 @@ export async function handleFileUpload(file: File, key: string): Promise<string>
 
 export async function handleFileUploadUser(file: File, userId: string, key: string): Promise<string> {
 	const fileData = ReadFile(file);
-	const encryptedData = encrypt(fileData, key);
+	const encryptedData = encrypt(await fileData, key);
 
 	const managementFile = {
 		id: "00000000-0000-0000-0000-000000000000",
@@ -46,11 +46,15 @@ export async function handleFileUploadUser(file: File, userId: string, key: stri
 	return (await SaveFileToUser(managementFile)).data;
 }
 
-function ReadFile(file: File): string {
-	const reader = new FileReader();
-	reader.readAsText(file);
-	reader.onload = function () {
-		return reader.result as string;
-	};
-	return "";
+function ReadFile(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = function () {
+            resolve(reader.result as string);
+        };
+        reader.onerror = function () {
+            reject(new Error("Failed to read file"));
+        };
+        reader.readAsText(file);
+    });
 }
