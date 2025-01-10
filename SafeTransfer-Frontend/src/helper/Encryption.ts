@@ -25,7 +25,6 @@ export function encrypt(data: ArrayBuffer, key: string | forge.util.ByteStringBu
     }
     key = deriveKey(key);
 
-    console.log("Original Data:", byteData);
 
     const iv = generateIV();
     const cipher = forge.cipher.createCipher('AES-CBC', key);
@@ -37,7 +36,6 @@ export function encrypt(data: ArrayBuffer, key: string | forge.util.ByteStringBu
     // Combine IV and ciphertext
     const ivHex = forge.util.bytesToHex(iv);
     const encryptedHex = forge.util.bytesToHex(encrypted.data);
-    console.log("Extracted Encrypted Data (hex):", encryptedHex);
     return ivHex + encryptedHex;
 }
 
@@ -50,7 +48,6 @@ export function decrypt(data: string, key: string | forge.util.ByteStringBuffer)
     const ivHex = data.substring(0, 32); // First 32 characters are the IV
     const encryptedHex = data.substring(32); // Remaining characters are the ciphertext
 
-    console.log("Extracted Encrypted Data (hex):", encryptedHex);
 
     const iv = forge.util.hexToBytes(ivHex);
     const encryptedBytes = forge.util.hexToBytes(encryptedHex);
@@ -62,6 +59,5 @@ export function decrypt(data: string, key: string | forge.util.ByteStringBuffer)
     const decrypted = decipher.output;
 
     const originalData = forge.util.decodeUtf8(decrypted.data);
-    console.log("Decrypted Data:", originalData);
     return originalData;
 }

@@ -12,7 +12,6 @@ export function handleFileDownload(data: TransferFile | null, key: string | util
         }
         const decryptedData = decrypt(data.encryptedData, key);
 		const byteArray = convertToUint8Array(decryptedData);
-		console.log(byteArray)
         const blob = new Blob([byteArray], { type: data.contentType });
         saveAs(blob, data.fileName);
     } catch (error) {
